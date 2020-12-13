@@ -39,10 +39,10 @@ Ex. `CloudTransferTask.exe GDriveBackup`
 | Feature            | Description | OS | Status |
 |--------------------|-------------|----|--------|
 | [Background service](https://github.com/xRoXaSx/CloudTransferTaskService) | Windows Service and Linux Deamon which are listening to sourcepath changes | Win/Lin/Mac |⭕|
-| Finish OSX tests   | OS X _should_ be supported, is not tested yet!  | Mac |📅|
 | Script on fail     | Option for scripts or programs if a rclone action fails | Win/Lin/Mac |📅|
 | Script on timeout  | Option for scripts or programs if pre / post action timesout | Win/Lin/Mac |📅|
 | Custom filter presets | Option to use customized filter presets instead of copy pasting  `FileType` | Win/Lin/Mac |📅|
+| Finish OSX tests   | OS X is supported  | Mac |✅|
 | Pre action script  | Option for scripts or programs before the main rclone action | Win/Lin/Mac |✅|
 | Post action script | Option for scripts or programs after the main rclone action | Win/Lin/Mac |✅|
 | Placeholders | Optional placeholders for `source` and `AdditionalArguments` like date and time | Win/Lin/Mac |✅|
