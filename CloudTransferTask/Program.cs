@@ -79,7 +79,7 @@ namespace CloudTransferTask {
                     ConsoleLogger.Error(e.ToString());
                 }
             }
-
+            
             if (!string.IsNullOrEmpty(deserializedJson.RCloneProgramLocation) && deserializedJson.RCloneProgramLocation != "TheLocationOfRClone") {
                 if (jobs.Count == 0) {
                     ConsoleLogger.Notice("Could not find any jobs called " + args[0]);
@@ -114,8 +114,7 @@ namespace CloudTransferTask {
                         if (j.PreAction != null) {
                             var pre = j.PreAction;
                             if (pre.Enabled && !string.IsNullOrEmpty(pre.MainCommand)) {
-                                if (string.IsNullOrEmpty(pre.FailAfterTimeOut.ToString())) { pre.FailAfterTimeOut = false;}
-                                if (string.IsNullOrEmpty(pre.FailAfterTimeOut.ToString())) { pre.FailAfterTimeOut = false;}
+                                if (string.IsNullOrEmpty(pre.ContinueAfterTimeOut.ToString())) { pre.ContinueAfterTimeOut = true;}
                                 try {
                                     RunActions(j, pre, deserializedJson.RCloneProgramLocation, "pre action");
                                 } catch (Exception e) {
@@ -198,10 +197,17 @@ namespace CloudTransferTask {
         private static bool CheckIfRunAsWindowsService() {
             // === Check if ran as windows service. Linux deamon will run with user context
             var isSystem = false;
-            if (os == "win") {
-                using (var identity = WindowsIdentity.GetCurrent()) {
-                    isSystem = identity.IsSystem;
-                }
+
+            switch (os) {
+                case "win":
+                    using (var identity = WindowsIdentity.GetCurrent()) {
+                        isSystem = identity.IsSystem;
+                    }
+
+                    break;
+
+                case "lin":
+                    break;
             }
 
             return isSystem;
@@ -290,11 +296,11 @@ namespace CloudTransferTask {
                             }
                         }
                     } else {
-                        if (action.FailAfterTimeOut) {
-                            ConsoleLogger.Error("Timed out... Exiting... FailAfterTimeOut = " + action.FailAfterTimeOut);
+                        if (!action.ContinueAfterTimeOut) {
+                            ConsoleLogger.Error("Timed out... Exiting... FailAfterTimeOut = " + action.ContinueAfterTimeOut);
                             Environment.Exit(returnVal);
                         } else {
-                            ConsoleLogger.Notice("Timed out... Skipping... FailAfterTimeOut = " + action.FailAfterTimeOut);
+                            ConsoleLogger.Notice("Timed out... Skipping... FailAfterTimeOut = " + action.ContinueAfterTimeOut);
                             returnVal = 1;
                         }
                     }

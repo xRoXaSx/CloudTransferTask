@@ -37,7 +37,7 @@ namespace CloudTransferTask.src.classes {
             } else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
                 os = "lin";
                 folderNameService = folderNameService.ToLower();
-            } else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+            } else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
                 os = "osx";
                 folderNameService = folderNameService.ToLower();
             } else if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD)) {
@@ -86,6 +86,8 @@ namespace CloudTransferTask.src.classes {
         /// Write config to file
         /// </summary>
         public static void WriteConfig() {
+            var serviceFolder = Environment.CurrentDirectory + Path.DirectorySeparatorChar + folderNameService;
+
             if (!Directory.Exists(confPath) && !string.IsNullOrEmpty(confPath)) {
                 ConsoleLogger.Info("Config folder has been created " + confPath);
                 Directory.CreateDirectory(confPath);
@@ -95,15 +97,6 @@ namespace CloudTransferTask.src.classes {
                 try {
                     var config = new JsonConfig();
                     var json = JsonConvert.SerializeObject(config, Formatting.Indented);
-                    var serviceFolder = Environment.CurrentDirectory + Path.DirectorySeparatorChar + folderNameService;
-
-                    try {
-                        if (!Directory.Exists(serviceFolder)) {
-                            Directory.CreateDirectory(serviceFolder);
-                        }
-                    } catch (Exception e) {
-                        Console.WriteLine("ERROR: Cannot create service directory!\n" + e.ToString());
-                    }
                     
                     try {
                         File.WriteAllText(confFullPath, json);
@@ -112,6 +105,14 @@ namespace CloudTransferTask.src.classes {
                 } catch (Exception e) {
                     ConsoleLogger.Error(e.ToString());
                 }
+            }
+
+            try {
+                if (!Directory.Exists(serviceFolder)) {
+                    Directory.CreateDirectory(serviceFolder);
+                }
+            } catch (Exception e) {
+                Console.WriteLine("ERROR: Cannot create service directory!\n" + e.ToString());
             }
         }
 
@@ -183,7 +184,7 @@ namespace CloudTransferTask.src.classes {
             string json = File.ReadAllText(configFilePath);
             var serializerSettings = new JsonSerializerSettings() { ObjectCreationHandling = ObjectCreationHandling.Replace };
             var deserializedJson = JsonConvert.DeserializeObject<JsonConfig>(json, serializerSettings);
-            var jobs = deserializedJson.Jobs.Where(x => x.EnableBackgroundService).ToList();
+            var jobs = deserializedJson.Jobs.Where(x => x.Service != null && x.Service.EnableBackgroundService).ToList();
             return jobs;
         }
     }

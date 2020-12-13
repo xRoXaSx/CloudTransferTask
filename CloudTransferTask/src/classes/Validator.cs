@@ -70,7 +70,7 @@ namespace CloudTransferTask.src.classes {
         /// <param name="rcloneProgramLocation">The location of rclone to get the config location via command</param>
         /// <returns></returns>
         private Jobs CheckForEnabledServices(Jobs job, string rcloneProgramLocation) {
-            if (job.EnableBackgroundService && Program.os == "win") {
+            if (job.Service != null && job.Service.EnableBackgroundService) {
                 bool addedConfigParameter = false;
                 if (!job.Flags.Any(x => x.Contains("--config"))) {
                     if (File.Exists(rcloneConfigPath)) {
