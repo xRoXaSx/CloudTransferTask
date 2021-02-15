@@ -317,7 +317,7 @@ namespace CloudTransferTask {
         /// <param name="arg">The string containing the placeholder</param>
         /// <returns></returns>
         private static string ReplaceDateTimePlaceholders(string arg) {
-            var returnVal = "";
+            var returnVal = arg;
             foreach (var placeholder in DateTimeMatch) {
                 var match = placeholder.Value.Select(x => Regex.Match(arg, "<" + x + ":(.*)>", RegexOptions.IgnoreCase)).FirstOrDefault();
                 if (match.Success) {
